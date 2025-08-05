@@ -1,7 +1,0 @@
-# node_modules
-/node_modules
-/dist
-eslint.config.js
-.vscode/
-.env
-app.log
