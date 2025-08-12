@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    command: sh -c "npx sequelize-cli db:migrate --config dist/config/config.js && npx sequelize-cli db:seed:all --config dist/config/config.js && node dist/main.js"
+    command: sh -c "npm run migrate && node dist/main.js"
     container_name: typescript-app 
     ports:
       - "3000:3000"

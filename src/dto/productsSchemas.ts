@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 
 export const createProductSchema = z.object({
   brand: z.string().min(1),
@@ -10,6 +10,5 @@ export const createProductSchema = z.object({
 export const idParamSchema = z.object({
   id: z.string().uuid(),
 });
-
 
 export const updateProductSchema = createProductSchema.partial();

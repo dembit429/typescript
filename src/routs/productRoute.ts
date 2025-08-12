@@ -60,11 +60,13 @@ productRouter.get("/", productController.getAllProducts);
  *               $ref: '#/components/schemas/Product'
  *       400:
  *         description: Bad request
+ *       409:
+ *         description: Conflict product exists.
  *       500:
  *         description: Server error
  */
 productRouter.post("/", productController.createProduct);
 productRouter.put("/:id", productController.updateProduct);
 productRouter.get("/:id", productController.getProductById);
+productRouter.delete("/:id", productController.deleteProductById);
 export default productRouter;
-    

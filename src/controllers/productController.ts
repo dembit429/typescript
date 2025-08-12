@@ -4,20 +4,28 @@ import logger from "../common/logger";
 import productService from "../services/productService";
 import { Request, Response } from "express";
 import redisService from "../services/redisService";
-import { createProductSchema,idParamSchema,updateProductSchema } from "../dto/productsSchemas";
+import {
+  createProductSchema,
+  idParamSchema,
+  updateProductSchema,
+} from "../dto/productsSchemas";
 import { validateWithSchema } from "../utils/validatewithSchema";
-
+import { statSync } from "fs";
 
 class ProductController {
   async createProduct(req: Request, res: Response) {
     try {
-      const parsed = validateWithSchema(createProductSchema,req.body);
+      const parsed = validateWithSchema(createProductSchema, req.body);
 
       const result = await productService.createProduct(parsed);
       res.status(STATUS_CODES.CREATED).json({ Data: result });
-    } catch (err:any) {
-     
+    } catch (err: any) {
       logger.error("Creating product error:", err);
+      if(err.message === ERROR_MESSAGES.PRODUCT_EXISTS){
+        return res.status(STATUS_CODES.CONFLICT).json({Data : ERROR_MESSAGES.PRODUCT_EXISTS})
+      }
+
+
       return res
         .status(STATUS_CODES.Internal_Server_Error)
         .json({ Error: err.message });
@@ -26,14 +34,16 @@ class ProductController {
 
   async updateProduct(req: Request, res: Response) {
     try {
-      const parsed = validateWithSchema(updateProductSchema,req.body);
+      const parsed = validateWithSchema(updateProductSchema, req.body);
 
-      const parsedParams = validateWithSchema(idParamSchema,req.params);
-    
-      const result = await productService.updateProduct(parsedParams.id, parsed);
+      const parsedParams = validateWithSchema(idParamSchema, req.params);
+
+      const result = await productService.updateProduct(
+        parsedParams.id,
+        parsed,
+      );
       res.status(STATUS_CODES.OK).json({ Data: result });
-    } catch (err : any) {
-
+    } catch (err: any) {
       if (err.message === ERROR_MESSAGES.PRODUCT_NOT_FOUND) {
         return res
           .status(STATUS_CODES.NOT_FOUND)
@@ -42,7 +52,7 @@ class ProductController {
       logger.error("Updating product error:", err);
       return res
         .status(STATUS_CODES.Internal_Server_Error)
-        .json({ Error: err.message});
+        .json({ Error: err.message });
     }
   }
 
@@ -59,7 +69,7 @@ class ProductController {
 
   async getProductById(req: Request, res: Response) {
     try {
-      const parsedParams = validateWithSchema(idParamSchema,req.params);
+      const parsedParams = validateWithSchema(idParamSchema, req.params);
       console.time(`Redis GET ${req.params.id}`);
       const cached = await redisService.getProduct(req.params.id);
       console.timeEnd(`Redis GET ${req.params.id}`);
@@ -89,11 +99,29 @@ class ProductController {
       }
 
       res.status(STATUS_CODES.OK).json({ Data: result });
-    } catch (err:any) {
+    } catch (err: any) {
       logger.error(err);
       res.status(STATUS_CODES.Internal_Server_Error).json({
         Error: err.message,
       });
+    }
+  }
+
+  async deleteProductById(req: Request, res: Response) {
+    try {
+      const parsedParams = validateWithSchema(idParamSchema, req.params);
+      const result = await productService.deleteProductById(parsedParams.id);
+      return res.status(STATUS_CODES.OK).json({ Data: result });
+    } catch (err: any) {
+      logger.error(err);
+      if (err.message === ERROR_MESSAGES.PRODUCT_NOT_FOUND) {
+        return res
+          .status(STATUS_CODES.NOT_FOUND)
+          .json({ Error: ERROR_MESSAGES.PRODUCT_NOT_FOUND });
+      }
+      return res
+        .status(STATUS_CODES.Internal_Server_Error)
+        .json({ Error: err.message });
     }
   }
 }

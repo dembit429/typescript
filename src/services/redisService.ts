@@ -3,6 +3,7 @@ import logger from "../common/logger";
 import chalk from "chalk";
 import { ERROR_MESSAGES } from "../common/errors";
 import dotenv from "dotenv";
+import Product from "../models/product";
 dotenv.config();
 
 class RedisService {
@@ -21,7 +22,7 @@ class RedisService {
     }
   }
 
-  async saveProduct(key: string, product: unknown): Promise<string> {
+  async saveProduct(key: string, product: Product): Promise<string> {
     try {
       return this.redis.set(key, JSON.stringify(product));
     } catch (err) {

@@ -32,5 +32,4 @@ const exportConfig = {
 };
 
 export default exportConfig;
-module.exports = exportConfig; 
-
+module.exports = exportConfig;
