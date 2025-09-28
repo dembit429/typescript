@@ -7,6 +7,7 @@ interface dbConfig {
   database: string;
   dialect: string;
   host: string;
+  port: number;
 }
 
 function getEnvVar(name: string): string {
@@ -21,6 +22,7 @@ const config: dbConfig = {
   username: getEnvVar("DB_USER"),
   password: getEnvVar("DB_PASSWORD"),
   database: getEnvVar("DB_NAME"),
+  port: parseInt(getEnvVar("DB_PORT")),
   dialect: "postgres",
   host: process.env.DB_HOST || "localhost",
 };
@@ -30,3 +32,4 @@ const exportConfig = {
 };
 
 export default exportConfig;
+module.exports = exportConfig;
