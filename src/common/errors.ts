@@ -1,0 +1,9 @@
+export const ERROR_MESSAGES = {
+  MISSING_CREDENTIALS: "MISSING_CREDENTIALS",
+  PRODUCT_EXISTS: "Product exists",
+  PRODUCT_NOT_FOUND: "Product not found.",
+  INVALID_CREDENTIALS: "Invalid credentials",
+  PRODUCT_CREATION_FAILED: "PRODUCT_CREATION_FAILED",
+  INTERNAL_SERVER_ERROR: "Internal Server Error.",
+  REDIS_SERVER_ERROR: "Couldn't reach Redis.",
+};
